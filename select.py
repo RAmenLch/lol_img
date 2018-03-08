@@ -9,4 +9,3 @@ def getidarray():
             idsar.append(ids)
     print(idsar)
 getidarray()
-test
