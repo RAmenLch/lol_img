@@ -53,4 +53,10 @@ def delImgToPure():
         for j in i:
             os.remove('img_Pure/' + j + '.jpg')
             print('remove' + j)
-delImgToPure()
+
+def savePureImgids():
+    file_dir = 'img_Pure'
+    for root, dirs, files in os.walk(file_dir):
+        strids = str(files).replace('\'','').replace(' ', '')
+    with open('pureImgids.txt','w') as file:
+        file.write(strids)
