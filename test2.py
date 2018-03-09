@@ -1,27 +1,12 @@
-import nphash
-from PIL import Image
+import numpy as np
 import cv2
 
-SUM = 964
-def getids():
-        ids = []
-        with open('skinid.txt','r') as file:
-            data =  file.read();
-        ids = data.split(',')
-        return ids
-def main():
-    ids = getids()
-    setSameSkin = set([])
-    for i in range(SUM):
-        c = 0
-        if int(ids[i])%1000 == 0:
-            continue
-        if ids[i] in setSameSkin:
-            continue
-        setSameSkin = setSameSkin | nphash.myclassify_gray_hist(ids,i)
 
+img = cv2.imread('test_img/test1.jpg')
+img_r = cv2.resize(img,(64,64))
+imgA = np.vstack((img_r, img_r))
+imgB =  np.vstack((imgA, img_r))
+#imgB = np.concatenate([img_r, img_r], axis=1)
 
-#下一个目标,优化速度!
-
-
-main()
+cv2.imshow('fuck',imgB)
+cv2.waitKey()
