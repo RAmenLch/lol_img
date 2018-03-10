@@ -1,12 +1,7 @@
 import cv2
 import numpy as np
 
-def reversed_cmp(x, y):
-    if x[1] > y[1]:
-        return 1
-    if x[1] < y[1]:
-        return -1
-    return 0
+
 
 
 
@@ -19,10 +14,10 @@ class SkinData():
         degree = 0;
         for i in range(4):
             degree += abs(data[i] - self.data[i])
-        degree = degree*0 + abs(data[4] - self.data[4])*16
-        return 100/degree
+        degree = degree*2 + abs(data[4] - self.data[4])*1
+        return 100/(degree + 1)
     def __str__(self):
-        return 'id:' + self.id + ' data:' + str(self.data)
+        return  self.id + ':' + str(self.data)[1:-1]
     def pushAutoFitXY(self,xy,degree):
         self.xystack.append((xy,degree))
         self.xystack.sort(key=lambda x:x[1])
@@ -42,7 +37,7 @@ class SkinData():
 
 def getSkinData():
     skdata = []
-    with open('pskindict.txt','r') as file:
+    with open('pskindict_aj.txt','r') as file:
         while 1:
             strdict = file.readline()
             if not strdict:
@@ -92,11 +87,6 @@ def robApartment(Apartments,vagrant):
 
 
 
-
-
-
-
-
 #max_size = 29
 def LCimg(imgPath,N = 29):
     img = cv2.imread(imgPath)
@@ -116,7 +106,6 @@ def LCimg(imgPath,N = 29):
 
 #####!!
 def getNewImg(ids,n):
-
     listi = []
     for i in range(n):
         listj = []
@@ -134,8 +123,9 @@ def getNewImg(ids,n):
             A = False
         else:
             imageTAT = np.vstack((imageTAT,imageQAQ))
+    #imageTAT = cv2.cvtColor(imageTAT,cv2.COLOR_BGR2GRAY)
     cv2.imshow('',imageTAT)
     cv2.waitKey()
 
 
-LCimg('test_img/test2.jpg')
+LCimg('test_img/riot1.jpg')
