@@ -2,11 +2,16 @@ import numpy as np
 import cv2
 
 
-img = cv2.imread('test_img/test1.jpg')
-img_r = cv2.resize(img,(64,64))
-imgA = np.vstack((img_r, img_r))
-imgB =  np.vstack((imgA, img_r))
-#imgB = np.concatenate([img_r, img_r], axis=1)
+class ttt():
+    def __init__(self,A):
+        self.A = A
 
-cv2.imshow('fuck',imgB)
-cv2.waitKey()
+
+t = []
+for i in range(10):
+    t.append(ttt(i))
+for i in t:
+    i.A = 233
+
+for i in t:
+    print(i.A)
