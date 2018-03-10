@@ -1,7 +1,12 @@
 import cv2
 import numpy as np
 
-
+def reversed_cmp(x, y):
+    if x[1] > y[1]:
+        return 1
+    if x[1] < y[1]:
+        return -1
+    return 0
 
 
 
@@ -10,21 +15,17 @@ class SkinData():
         self.id = id
         self.data = data
         self.xystack = [(-1,0)]
-        self.key = True
-    def __init__(self):
-        self.key = False
-
-
     def DegreeOfComparability(self,data):
         degree = 0;
         for i in range(4):
             degree += abs(data[i] - self.data[i])
-        degree += abs(data[4] - self.data[4]) * 2
+        degree = degree*0 + abs(data[4] - self.data[4])*16
         return 100/degree
     def __str__(self):
         return 'id:' + self.id + ' data:' + str(self.data)
     def pushAutoFitXY(self,xy,degree):
         self.xystack.append((xy,degree))
+        self.xystack.sort(key=lambda x:x[1])
     def popAutoFitXY(self):
         if self.xystack:
             self.xystack.pop(-1)
@@ -54,35 +55,32 @@ def getSkinData():
 
 
 def optimalSolution(datas,n):
-    Apartments = []
-    for i in range(n*n):
-        Apartments.append([])
-
+    Apartments = {}
+    fuck = SkinData('test1.jpg',[0,0,0,0])
     skdata = getSkinData()
     for skd in skdata:
         for k in range(n*n):
             doc = skd.DegreeOfComparability(datas[k])
-            if doc > skd.MaxDegree():
-                if not Apartments[k]:
+            if not k in Apartments:
+                skd.pushAutoFitXY(k,doc)
+            else:
+                if Apartments[k].MaxDegree() < skd.MaxDegree():
                     skd.pushAutoFitXY(k,doc)
-                else:
-                    if Apartments[k].MaxDegree() < skd.MaxDegree():
-                        skd.pushAutoFitXY(k,doc)
-        if not Apartments[skd.Maxxy()]:
+        if not skd.Maxxy() in Apartments:
             Apartments[skd.Maxxy()] = skd
         else:
             robApartment(Apartments,Apartments[skd.Maxxy()])
             Apartments[skd.Maxxy()] = skd
     ids = []
-    for apm in Apartments:
-        ids.append(apm.id)
+    for k in range(n*n):
+        ids.append(Apartments.get(k, fuck).id)
     return ids
 
 
 
 def robApartment(Apartments,vagrant):
     if vagrant.popAutoFitXY():
-        if not Apartments[vagrant.Maxxy()]:
+        if not vagrant.Maxxy() in Apartments:
             Apartments[vagrant.Maxxy()] = vagrant
             return
         else:
@@ -93,20 +91,6 @@ def robApartment(Apartments,vagrant):
                 robApartment(Apartments,vagrant)
 
 
-
-'''
-    for data in datas:
-        maxdg = 0
-        for i in skdata:
-            if i.id in ids:
-                continue
-            dg = i.DegreeOfComparability(data)
-            if dg > maxdg:
-                maxdg = dg
-                maxid = i.id
-        ids.append(maxid)
-    return ids
-'''
 
 
 
@@ -129,6 +113,7 @@ def LCimg(imgPath,N = 29):
     ids = optimalSolution(datalist,N)
     getNewImg(ids,N)
 
+
 #####!!
 def getNewImg(ids,n):
 
@@ -137,8 +122,8 @@ def getNewImg(ids,n):
         listj = []
         for j in range(n):
             id = ids[i*n + j]
-            img = cv2.imread('img/' + id)
-            img_r = cv2.resize(img,(int(980/n),int(500/n)))
+            img = cv2.imread('img_Pure/' + id)
+            img_r = cv2.resize(img,(33,17))
             listj.append(img_r)
         listi.append(listj)
     A = True
@@ -153,4 +138,4 @@ def getNewImg(ids,n):
     cv2.waitKey()
 
 
-LCimg('test_img/riot.jpg')
+LCimg('test_img/test2.jpg')
