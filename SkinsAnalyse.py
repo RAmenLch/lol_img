@@ -1,6 +1,16 @@
 import cv2
 import numpy as np
+'''
+本模块主要分析皮肤原画,左上左下右上右下四个区域的灰度值和平均灰度值,将其保存在pskindict.txt
 
+输入:
+    'pureImgids.txt:保存所有的纯净无重复皮肤的皮肤文件名
+输出:
+    pskindict.txt:每个皮肤插画的左上左下右上右下平均灰度值
+
+缺点:
+    实际的灰度值并不完美,需要经过调整
+'''
 def getPureSkinFileName():
     with open('pureImgids.txt','r') as file:
         strids = file.read()
