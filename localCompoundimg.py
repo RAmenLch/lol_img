@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from SkinsAnalyse import Skin_Id_Data
-
+import datetime
 
 '''
 利用本地的图片来合成想要的图像
@@ -100,7 +100,7 @@ def optimalSolution(datas,n):
 def robApartment(Apartments,vagrant):
     #首先把最适合自己的房子从小本本上删了,如果返回F就是真的变成流浪汉了
     if vagrant.popAutoFitXY():
-        #现在的最适合的房子如果没有房客,就直接入住
+        #翻小本本,现在的最适合的房子如果没有房客,就直接入住
         if not vagrant.Maxxy() in Apartments:
             Apartments[vagrant.Maxxy()] = vagrant
             return
@@ -136,8 +136,13 @@ def LCimg(imgPath,N = 29):
             data = np.append(data,np.mean(data))
             datalist.append(data)
     #计算数据,返回配对成功的文件名列表
+    timeA = datetime.datetime.now()
     ids = optimalSolution(datalist,N)
+    timeB = datetime.datetime.now()
     getNewImg(ids,N)
+    timeC = datetime.datetime.now()
+    print(timeB-timeA)
+    print(timeC-timeB)
 
 
 #####!!
@@ -149,9 +154,8 @@ def getNewImg(ids,n):
         for j in range(n):
             #将一维的列表折成二维
             id = ids[i*n + j]
-            img = cv2.imread('img_Pure/' + id)
-            img_r = cv2.resize(img,(33,17))
-            listj.append(img_r)
+            img = cv2.imread('img_Pure_resize/' + id)
+            listj.append(img)
         listi.append(listj)
     A = True
     for i in listi:
@@ -169,4 +173,4 @@ def getNewImg(ids,n):
     cv2.waitKey()
 
 
-LCimg('test_img/riot1.jpg')
+LCimg('test_img/fa.jpg')
