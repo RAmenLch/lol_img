@@ -2,6 +2,8 @@
 #feimengjuan
 # 利用python实现多种方法来实现图像识别
 
+#来自http://www.jb51.net/article/83315.htm
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -112,41 +114,7 @@ def Hamming_distance(hash1,hash2):
   if hash1[index] != hash2[index]:
    num += 1
  return num
-def myclassify_gray_hist(ids,i,size = (256,256)):
-    print(i)
-    SUM = 964
-    setSameSkin = set()
-    img1 = cv2.imread('img/'+ ids[i] +'.jpg')
-    img1 = cv2.resize(img1,size)
-    hist1 = cv2.calcHist([img1],[0],None,[256],[0.0,255.0])
-    flag = False
-    for j in range(i + 1,SUM):
-        if int(ids[j])%1000 == 0:
-            continue
-        elif abs(int(ids[j]) - int(ids[i])) <=20:
-            continue
-        else:
-            img2 = cv2.imread('img/' + ids[j] + '.jpg')
-            img2 = cv2.resize(img2,size)
-            hist2 = cv2.calcHist([img2],[0],None,[256],[0.0,255.0])
 
-            degree = 0
-            for i in range(len(hist1)):
-                if hist1[i] != hist2[i]:
-                    degree = degree + (1 - abs(hist1[i]-hist2[i])/max(hist1[i],hist2[i]))
-                else:
-                    degree = degree + 1
-            degree = degree/len(hist1)
-            if degree >= 0.7 :
-                flag == True
-                setSameSkin.add(ids[j])
-                print(ids[j] + '!!!')
-    if flag == True:
-        setSameSkin.add(ids[i])
-        with open('sameskin.txt','a') as file :
-            file.write(str(setSameSkin))
-            file.write(';')
-    return setSameSkin
 
 
 

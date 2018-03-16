@@ -1,5 +1,6 @@
 import requests
 import time
+import os
 '''
 主爬虫:爬取LOL官网上的英雄皮肤
 
@@ -19,20 +20,22 @@ def getids():
     with open('skinid.txt','r') as file:
         data =  file.read();
     ids = data.split(',')
-    return ids
+    return ids[:-1]
 
 #运行主函数
 def main():
     ids = getids()
-    for i in ids:
+    for id in ids:
         try:
-            url = hurl + i + '.jpg'
+            url = hurl + id + '.jpg'
             #开始爬取
             html = requests.get(url)
             #如果爬取到空网页404,抛出异常
             html.raise_for_status()
             time.sleep(0.2)
-            with open('img/' + i + '.jpg', 'wb') as file:
+            if not os.path.exists('img'):
+                os.mkdir('./img')
+            with open('img/' + id + '.jpg', 'wb') as file:
                 file.write(html.content)
         except Exception as e:
             print(e)

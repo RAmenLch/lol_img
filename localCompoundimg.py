@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from adjustpskd import SkinData,getSkinData
+from SkinsAnalyse import Skin_Id_Data
 
 
 '''
@@ -13,7 +13,51 @@ from adjustpskd import SkinData,getSkinData
     getNewImg()输出的图片
 
 '''
+class SkinData(Skin_Id_Data):
+    def __init__(self,id,data):
+        super().__init__(id,data)
+        #保存'选用图片'的像素坐标列表,排序为拟合程度从小到大,第一个参数是像素坐标,第二个参数是拟合程度
+        self.xystack = [(-1,0)]
+    #输出data和self.data的拟合程度:100/(边角灰度值的1-范数*权 +平均灰度值的1-范数*权)
+    def DegreeOfComparability(self,data):
+        degree = 0;
+        for i in range(4):
+            degree += abs(data[i] - self.data[i])
+        degree = degree*2 + abs(data[4] - self.data[4])*1
+        return 100/(degree + 1)
+    #遍历添加像素点坐标和与其的拟合程度,排序为拟合程度从小到大
+    def pushAutoFitXY(self,xy,degree):
+        self.xystack.append((xy,degree))
+        self.xystack.sort(key=lambda x:x[1])
+    #将最适合的像素点删除(因为这个像素点有更适合的图片呢)
+    def popAutoFitXY(self):
+        if self.xystack:
+            self.xystack.pop(-1)
+            if self.xystack:
+                return True
+            else:
+                return False
+        else:
+            return False
+    def MaxDegree(self):
+            return self.xystack[-1][1]
+    def Maxxy(self):
+        return self.xystack[-1][0]
 
+
+def getSkinData(txtname):
+    skdata = []
+    with open(txtname,'r') as file:
+        while 1:
+            strdict = file.readline()
+            if not strdict:
+                break
+            id,data = strdict.split(':')
+            data = data[:-1].split(',')
+            #批量转换类型
+            data = list(map(float,data))
+            skdata.append(SkinData(id,data))
+    return skdata
 
 
 
