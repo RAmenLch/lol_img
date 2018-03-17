@@ -20,6 +20,26 @@ import numpy as np
 
 
 '''
+def cutStick(img):
+    A = np.mean(img)
+    B = np.median(img)
+    for i in img:
+        for j in i:
+            if abs(j - A) >80 and abs(j - B) >100:
+                j -= (j-A)/2
+    return img
+def to22(img):
+    len1 = int(len(img[0])/2)
+    A = np.mean(          cutStick(img[:len1,:len1]) )
+    AA = np.mean(         cutStick(img[:len1,len1:]) )
+    AAA = np.mean(        cutStick(img[len1:,:len1]) )
+    AAAA = np.mean(       cutStick(img[len1:,len1:]) )
+    return np.array([[A,AA],[AAA,AAAA]])
+
+
+
+
+
 def getPureSkinFileName():
     with open('pureImgids.txt','r') as file:
         strids = file.read()
@@ -33,7 +53,8 @@ def analyseSkin(size = (2,2)):
     fns = getPureSkinFileName()
     for i in fns:
         img = cv2.imread('img_Pure/' + i, cv2.IMREAD_GRAYSCALE)
-        img = cv2.resize(img,size)
+        #img = cv2.resize(img,size,cv2.INTER_AREA)
+        img = to22(img)
 #        print(img)
         with open('pskindict.txt','a') as file:
             file.write(i + ':')
@@ -77,6 +98,8 @@ def adjust():
         for skd in skds:
             #核心
             skd.data[i] = int(((skd.data[i] - min) / (max - min)) *255)
+    with open('pskindict_aj.txt','w') as file:
+        file.write('')
     for skd_aj in skds:
         #保存为转换完的数据
         with open('pskindict_aj.txt','a') as file:

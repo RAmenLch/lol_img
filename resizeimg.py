@@ -13,4 +13,4 @@ def resizeImg(size = (33,17)):
         cv2.imwrite('img_Pure_resize/' + id, img_r)
 
 if __name__ == '__main__':
-    resizeImg((18,18))
+    resizeImg()

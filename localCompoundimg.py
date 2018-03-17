@@ -18,12 +18,13 @@ class SkinData(Skin_Id_Data):
         super().__init__(id,data)
         #保存'选用图片'的像素坐标列表,排序为拟合程度从小到大,第一个参数是像素坐标,第二个参数是拟合程度
         self.xystack = [(-1,0)]
+        self.c = 0
     #输出data和self.data的拟合程度:100/(边角灰度值的1-范数*权 +平均灰度值的1-范数*权)
     def DegreeOfComparability(self,data):
         degree = 0;
         for i in range(4):
             degree += abs(data[i] - self.data[i])
-        degree = degree*2 + abs(data[4] - self.data[4])*1
+        degree = degree*9 + abs(data[4] - self.data[4])*1
         return 100/(degree + 1)
     #遍历添加像素点坐标和与其的拟合程度,排序为拟合程度从小到大
     def pushAutoFitXY(self,xy,degree):
@@ -45,7 +46,7 @@ class SkinData(Skin_Id_Data):
         return self.xystack[-1][0]
 
 
-def getSkinData(txtname):
+def getSkinData(txtname = 'pskindict_aj.txt'):
     skdata = []
     with open(txtname,'r') as file:
         while 1:
@@ -75,7 +76,7 @@ def optimalSolution(datas,n):
         for k in range(n*n):
             #评价函数
             doc = skd.DegreeOfComparability(datas[k])
-            #如果房子没住人,大胆把房间号写到小本本里
+            #如果房子没住人,把房间号写到小本本里
             if not k in Apartments:
                 skd.pushAutoFitXY(k,doc)
             else:
@@ -94,7 +95,6 @@ def optimalSolution(datas,n):
     for k in range(n*n):
         ids.append(Apartments.get(k, fuck).id)
     return ids
-
 
 #被赶出来的人抢房子函数(公寓表,流离失所的人)
 def robApartment(Apartments,vagrant):
@@ -124,7 +124,7 @@ def LCimg(imgPath,N = 29):
     img_r = cv2.resize(img,(N*2,N*2))
     #灰度
     img_g = cv2.cvtColor(img_r,cv2.COLOR_BGR2GRAY)
-    cv2.imshow('',img)
+    cv2.imshow('',img_r)
     cv2.waitKey()
     #收集数据和pskindict_aj.txt中data配对
     datalist = []
@@ -136,13 +136,13 @@ def LCimg(imgPath,N = 29):
             data = np.append(data,np.mean(data))
             datalist.append(data)
     #计算数据,返回配对成功的文件名列表
-    timeA = datetime.datetime.now()
+    #timeA = datetime.datetime.now()
     ids = optimalSolution(datalist,N)
-    timeB = datetime.datetime.now()
+    #timeB = datetime.datetime.now()
     getNewImg(ids,N)
-    timeC = datetime.datetime.now()
-    print(timeB-timeA)
-    print(timeC-timeB)
+    #timeC = datetime.datetime.now()
+    #print(timeB-timeA)
+    #print(timeC-timeB)
 
 
 #####!!
@@ -170,7 +170,8 @@ def getNewImg(ids,n):
     #imageTAT = cv2.cvtColor(imageTAT,cv2.COLOR_BGR2GRAY)
     #展示图像
     cv2.imshow('',imageTAT)
+    cv2.imwrite('ttt.jpg', imageTAT)
     cv2.waitKey()
 
 
-LCimg('test_img/fa.jpg')
+LCimg('test_img/lol.jpg')
